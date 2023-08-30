@@ -1,3 +1,11 @@
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+struct Args {
+    todo_body: String,
+}
+
 fn main() {
-    println!("Hello, world!");
+    let args = Args::parse();
+    println!("{}", args.todo_body);
 }
