@@ -1,6 +1,6 @@
 -- Your SQL goes here
 CREATE TABLE todos (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY NOT NULL,
   body VARCHAR NOT NULL,
   completed BOOLEAN NOT NULL,
   list_id INTEGER NOT NULL

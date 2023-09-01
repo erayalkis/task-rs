@@ -2,14 +2,14 @@
 
 diesel::table! {
     lists (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         title -> Text,
     }
 }
 
 diesel::table! {
     todos (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         body -> Text,
         completed -> Bool,
         list_id -> Integer,

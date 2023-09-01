@@ -1,5 +1,5 @@
 -- Your SQL goes here
 CREATE TABLE lists (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY NOT NULL,
   title VARCHAR NOT NULL
 )
