@@ -13,7 +13,7 @@ struct Args {
 fn main() {
     use task_rs::schema::lists::dsl::*;
 
-    // let args = Args::parse();
+    let args = Args::parse();
 
     let conn = &mut get_db();
     let res = lists.limit(5).select(List::as_select()).load(conn).unwrap();
