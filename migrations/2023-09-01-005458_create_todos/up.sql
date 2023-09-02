@@ -1,5 +1,5 @@
 -- Your SQL goes here
-CREATE TABLE todos (
+CREATE TABLE tasks (
   id INTEGER PRIMARY KEY NOT NULL,
   body VARCHAR NOT NULL,
   completed BOOLEAN NOT NULL,

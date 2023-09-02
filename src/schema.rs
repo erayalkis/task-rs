@@ -8,7 +8,7 @@ diesel::table! {
 }
 
 diesel::table! {
-    todos (id) {
+    tasks (id) {
         id -> Integer,
         body -> Text,
         completed -> Bool,
@@ -18,5 +18,5 @@ diesel::table! {
 
 diesel::allow_tables_to_appear_in_same_query!(
     lists,
-    todos,
+    tasks,
 );
