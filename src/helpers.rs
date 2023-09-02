@@ -98,9 +98,50 @@ pub fn create_task_record(
         list_id: id_unwrapped,
     };
 
-    diesel::insert_into(tasks)
+    let list = lists
+        .select(List::as_select())
+        .find(id_unwrapped)
+        .first(&mut conn)
+        .unwrap();
+
+    match diesel::insert_into(tasks)
         .values(new_task)
         .execute(&mut conn)
+    {
+        Ok(res) => {
+            display_list_items(&list.title);
+            return Ok(res);
+        }
+
+        Err(err) => return Err(err),
+    }
+}
+
+pub fn delete_task_record(task_id: i32) -> Result<usize, diesel::result::Error> {
+    let mut conn = get_db();
+
+    let task = tasks
+        .select(Task::as_select())
+        .find(task_id)
+        .first(&mut conn)
+        .unwrap();
+
+    let parent_list = lists
+        .select(List::as_select())
+        .find(task.list_id)
+        .first(&mut conn)
+        .unwrap();
+
+    match diesel::delete(tasks.find(task_id)).execute(&mut conn) {
+        Ok(res) => {
+            display_list_items(&parent_list.title);
+            return Ok(res);
+        }
+
+        Err(err) => {
+            return Err(err);
+        }
+    }
 }
 
 pub fn toggle_task_completion(task_id: i32) -> Result<Task, diesel::result::Error> {

@@ -1,7 +1,7 @@
 use clap::Parser;
 use task_rs::helpers::{
-    create_list_record, create_task_record, display_list_items, ensure_at_least_one_list_exists,
-    get_list_at, toggle_task_completion,
+    create_list_record, create_task_record, delete_task_record, display_list_items,
+    ensure_at_least_one_list_exists, get_list_at, toggle_task_completion,
 };
 
 #[derive(Parser, Debug)]
@@ -46,6 +46,16 @@ fn main() {
 
             let parsed_body = args.command_body.unwrap().parse::<i32>().unwrap();
             toggle_task_completion(parsed_body).unwrap();
+        }
+        "delete" => {
+            ensure_at_least_one_list_exists();
+
+            if args.command_body.is_none() {
+                panic!("The `delete` command requires a task ID to be provided!");
+            }
+
+            let parsed_body = args.command_body.unwrap().parse::<i32>().unwrap();
+            delete_task_record(parsed_body).unwrap();
         }
         _ => {
             ensure_at_least_one_list_exists();
