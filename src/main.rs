@@ -1,7 +1,8 @@
 use clap::Parser;
 use task_rs::helpers::{
-    create_list_record, create_task_record, delete_task_record, display_list_items,
-    ensure_at_least_one_list_exists, get_list_at, get_list_from_title, toggle_task_completion,
+    create_list_record, create_task_record, delete_task_record, display_all_items,
+    display_list_items, ensure_at_least_one_list_exists, get_list_at, get_list_from_title,
+    toggle_task_completion,
 };
 
 #[derive(Parser, Debug)]
@@ -35,6 +36,10 @@ fn main() {
 
             let first_list = get_list_at(1).unwrap();
             display_list_items(&first_list.title);
+        }
+        "ls-all" => {
+            ensure_at_least_one_list_exists();
+            display_all_items();
         }
         "edit" => {}
         "toggle" => {

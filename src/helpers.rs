@@ -63,6 +63,8 @@ pub fn get_list_items(list_name: &String) -> Result<Vec<Task>, diesel::result::E
     let mut conn = get_db();
 
     ensure_list_exists(list_name);
+    // Maybe these queries can be refactored to be better?
+    // I'm assuming a query like `SELECT * FROM tasks WHERE list_id = (SELECT * FROM lists WHERE list_name = $) should work, very burnt out rn though so this might just be shit`
     let list: List = lists
         .filter(title.eq(list_name))
         .select(List::as_select())
@@ -91,6 +93,16 @@ pub fn display_list_items(list_name: &String) {
         } else {
             println!("[ ] - {}: {}", task.id, task.body);
         }
+    }
+}
+
+pub fn display_all_items() {
+    let mut conn = get_db();
+    let lists_vec: Vec<List> = lists.select(List::as_select()).load(&mut conn).unwrap();
+
+    for list in lists_vec {
+        display_list_items(&list.title);
+        println!(" ");
     }
 }
 
