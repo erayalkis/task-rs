@@ -1,7 +1,7 @@
 use clap::Parser;
 use task_rs::helpers::{
     create_list_record, create_task_record, delete_task_record, display_list_items,
-    ensure_at_least_one_list_exists, get_list_at, toggle_task_completion,
+    ensure_at_least_one_list_exists, get_list_at, get_list_from_title, toggle_task_completion,
 };
 
 #[derive(Parser, Debug)]
@@ -17,7 +17,7 @@ struct Args {
 }
 
 fn main() {
-    let mut args = Args::parse();
+    let args = Args::parse();
 
     match args.command.as_str() {
         "create-list" => {
@@ -60,15 +60,15 @@ fn main() {
         _ => {
             ensure_at_least_one_list_exists();
 
-            if args.command.len() == 0 {
-                panic!("Cannot create a task without the <LIST_NAME> parameter!");
+            let list_id;
+            if args.command_body.is_none() {
+                list_id = 1
+            } else {
+                let list = get_list_from_title(args.command_body.unwrap()).unwrap();
+                list_id = list.id;
             }
 
-            if args.list_id.is_none() {
-                args.list_id = Some(1);
-            }
-
-            create_task_record(&args.command, &args.list_id).unwrap();
+            create_task_record(&args.command, list_id).unwrap();
         }
     }
 }

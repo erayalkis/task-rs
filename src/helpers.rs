@@ -21,6 +21,15 @@ pub fn get_list_at(n: i32) -> Result<List, diesel::result::Error> {
     lists.select(List::as_select()).find(n).first(&mut conn)
 }
 
+pub fn get_list_from_title(list_title: String) -> Result<List, diesel::result::Error> {
+    let mut conn = get_db();
+
+    lists
+        .select(List::as_select())
+        .filter(title.eq(list_title))
+        .first(&mut conn)
+}
+
 pub fn get_list_count() -> Result<i64, diesel::result::Error> {
     let mut conn = get_db();
     lists.count().get_result(&mut conn)
@@ -87,20 +96,19 @@ pub fn display_list_items(list_name: &String) {
 
 pub fn create_task_record(
     task_body: &String,
-    parent_id: &Option<i32>,
+    parent_id: i32,
 ) -> Result<usize, diesel::result::Error> {
     let mut conn = get_db();
 
-    let id_unwrapped = parent_id.unwrap();
     let new_task = NewTask {
         body: task_body.to_string(),
         completed: false,
-        list_id: id_unwrapped,
+        list_id: parent_id,
     };
 
     let list = lists
         .select(List::as_select())
-        .find(id_unwrapped)
+        .find(parent_id)
         .first(&mut conn)
         .unwrap();
 
