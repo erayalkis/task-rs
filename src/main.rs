@@ -1,5 +1,5 @@
 use clap::Parser;
-use task_rs::helpers::get_list_items;
+use task_rs::helpers::{display_list_items, get_list_items};
 
 #[derive(Parser, Debug)]
 struct Args {
@@ -13,8 +13,8 @@ fn main() {
 
     match args.command.as_str() {
         "ls" => {
-            let content = get_list_items(args.list_name);
-            display_list_items(&content);
+            let content = get_list_items(&args.list_name);
+            display_list_items(&args.list_name, &content);
         }
         "edit" => {}
         "toggle" => {}
