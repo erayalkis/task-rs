@@ -14,5 +14,5 @@ fn main() {
     run_db_migrations(&mut conn);
 
     fs::copy("./taskrs.db", "./out/taskrs.db").unwrap();
-    fs::copy("./target/build/release/task-rs", "./out/task-rs").unwrap();
+    fs::copy("./target/release/task-rs", "./out/task-rs").unwrap();
 }
