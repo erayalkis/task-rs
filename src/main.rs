@@ -40,7 +40,12 @@ fn main() {
         "toggle" => {
             ensure_at_least_one_list_exists();
 
-            toggle_task_completion(&args.task_id).unwrap();
+            if args.command_body.is_none() {
+                panic!("The `toggle` command requires a task ID to be provided!");
+            }
+
+            let parsed_body = args.command_body.unwrap().parse::<i32>().unwrap();
+            toggle_task_completion(parsed_body).unwrap();
         }
         _ => {
             ensure_at_least_one_list_exists();

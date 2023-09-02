@@ -74,9 +74,14 @@ pub fn display_list_items(list_name: &String) {
         return;
     }
 
-    println!("Display tasks for {}", list_name);
+    println!("--- Displaying tasks for {} ---\n", list_name);
+
     for task in content {
-        println!("{}: {}", task.id, task.body);
+        if task.completed {
+            println!("[X] - {}: {}", task.id, task.body);
+        } else {
+            println!("[ ] - {}: {}", task.id, task.body);
+        }
     }
 }
 
@@ -98,11 +103,34 @@ pub fn create_task_record(
         .execute(&mut conn)
 }
 
-pub fn toggle_task_completion(task_id: &Option<i32>) -> Result<usize, diesel::result::Error> {
+pub fn toggle_task_completion(task_id: i32) -> Result<Task, diesel::result::Error> {
     let mut conn = get_db();
-    let id_unwrapped: i32 = task_id.unwrap();
 
-    diesel::update(tasks.find(id_unwrapped))
-        .set(completed.eq(true))
+    let mut task: Task = tasks
+        .select(Task::as_select())
+        .find(task_id)
+        .first(&mut conn)
+        .unwrap();
+
+    let parent_list = lists
+        .select(List::as_select())
+        .find(task.list_id)
+        .first(&mut conn)
+        .unwrap();
+
+    // SQLite doesn't support RETURN's on updates, so we have to do it like this instead
+    match diesel::update(tasks.find(task_id))
+        .set(completed.eq(!task.completed))
         .execute(&mut conn)
+    {
+        Ok(_) => {
+            display_list_items(&parent_list.title);
+            task.completed = !task.completed;
+            return Ok(task);
+        }
+
+        Err(err) => {
+            return Err(err);
+        }
+    }
 }
