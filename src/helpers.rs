@@ -3,6 +3,18 @@ use crate::schema::tasks::dsl::*;
 use crate::{get_db, models::*};
 use diesel::prelude::*;
 
+pub fn create_list_record(list_name: &String) -> Result<usize, diesel::result::Error> {
+    let mut conn = get_db();
+
+    let new_task = NewList {
+        title: list_name.to_string(),
+    };
+
+    diesel::insert_into(lists)
+        .values(new_task)
+        .execute(&mut conn)
+}
+
 pub fn get_list_items(list_name: &String) -> Result<Vec<Task>, diesel::result::Error> {
     let mut conn = get_db();
 
@@ -32,6 +44,24 @@ pub fn display_list_items(list_name: &String) {
     for task in content {
         println!("{}: {}", task.id, task.body);
     }
+}
+
+pub fn create_task_record(
+    task_body: &String,
+    parent_id: &Option<i32>,
+) -> Result<usize, diesel::result::Error> {
+    let mut conn = get_db();
+
+    let id_unwrapped = parent_id.unwrap();
+    let new_task = NewTask {
+        body: task_body.to_string(),
+        completed: false,
+        list_id: id_unwrapped,
+    };
+
+    diesel::insert_into(tasks)
+        .values(new_task)
+        .execute(&mut conn)
 }
 
 pub fn toggle_task_completion(task_id: &Option<i32>) -> Result<usize, diesel::result::Error> {
