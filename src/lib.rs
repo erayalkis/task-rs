@@ -8,6 +8,5 @@ pub fn get_db() -> SqliteConnection {
     // TODO: Replace this to use the `dotenv` package instead
     let db_url = "./taskrs.db";
 
-    println!("Creating DB connection!");
     SqliteConnection::establish(db_url).expect("Error while connecting to database!")
 }

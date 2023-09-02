@@ -15,6 +15,12 @@ pub fn create_list_record(list_name: &String) -> Result<usize, diesel::result::E
         .execute(&mut conn)
 }
 
+pub fn get_list_at(n: i32) -> Result<List, diesel::result::Error> {
+    let mut conn = get_db();
+
+    lists.select(List::as_select()).find(n).first(&mut conn)
+}
+
 pub fn get_list_items(list_name: &String) -> Result<Vec<Task>, diesel::result::Error> {
     let mut conn = get_db();
 
