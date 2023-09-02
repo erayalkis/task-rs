@@ -1,6 +1,7 @@
 use clap::Parser;
 use task_rs::helpers::{
-    create_list_record, create_task_record, display_list_items, get_list_at, toggle_task_completion,
+    create_list_record, create_task_record, display_list_items, ensure_at_least_one_list_exists,
+    get_list_at, toggle_task_completion,
 };
 
 #[derive(Parser, Debug)]
@@ -24,6 +25,8 @@ fn main() {
             create_list_record(unwrapped_body).unwrap();
         }
         "ls" => {
+            ensure_at_least_one_list_exists();
+
             if args.command_body.is_some() {
                 let unwrapped_body = &args.command_body.unwrap();
                 display_list_items(unwrapped_body);
@@ -35,9 +38,13 @@ fn main() {
         }
         "edit" => {}
         "toggle" => {
+            ensure_at_least_one_list_exists();
+
             toggle_task_completion(&args.task_id).unwrap();
         }
         _ => {
+            ensure_at_least_one_list_exists();
+
             if args.command.len() == 0 {
                 panic!("Cannot create a task without the <LIST_NAME> parameter!");
             }

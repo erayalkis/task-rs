@@ -21,19 +21,47 @@ pub fn get_list_at(n: i32) -> Result<List, diesel::result::Error> {
     lists.select(List::as_select()).find(n).first(&mut conn)
 }
 
+pub fn get_list_count() -> Result<i64, diesel::result::Error> {
+    let mut conn = get_db();
+    lists.count().get_result(&mut conn)
+}
+
+pub fn ensure_at_least_one_list_exists() {
+    let list_count = get_list_count().unwrap();
+
+    if list_count == 0 {
+        panic!("Cannot use this command without any lists! Please use the `create-list` command first!");
+    }
+}
+
+pub fn ensure_list_exists(list_name: &String) {
+    let mut conn = get_db();
+
+    match lists
+        .select(List::as_select())
+        .filter(title.eq(list_name))
+        .first(&mut conn)
+    {
+        Ok(_) => {}
+
+        Err(err) => {
+            panic!("List does not exist! More details: {}", err);
+        }
+    }
+}
+
 pub fn get_list_items(list_name: &String) -> Result<Vec<Task>, diesel::result::Error> {
     let mut conn = get_db();
 
-    // TODO: Make this part use the `first` function for Diesel
-    let list: Vec<List> = lists
+    ensure_list_exists(list_name);
+    let list: List = lists
         .filter(title.eq(list_name))
-        .limit(1)
         .select(List::as_select())
-        .load(&mut conn)
+        .first(&mut conn)
         .expect("Error while loading lists!");
 
     tasks
-        .filter(list_id.eq(list[0].id))
+        .filter(list_id.eq(list.id))
         .select(Task::as_select())
         .load(&mut conn)
 }
