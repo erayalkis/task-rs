@@ -7,6 +7,7 @@ use task_rs::helpers::{
 
 #[derive(Parser, Debug)]
 struct Args {
+    #[arg(default_value = " ")]
     command: String,
     command_body: Option<String>,
     #[arg(short, long)]
@@ -38,6 +39,10 @@ fn main() {
             display_list_items(&first_list.title);
         }
         "ls-all" => {
+            ensure_at_least_one_list_exists();
+            display_all_items();
+        }
+        " " => {
             ensure_at_least_one_list_exists();
             display_all_items();
         }
